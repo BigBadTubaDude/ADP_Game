@@ -6,14 +6,14 @@ import random
 enemyDam = [-5, 100] # Range of damage the enemy can inflict
 axeDam = [-50, 155] # Axe damage range
 dagDam = [4,19,5,20,20,42] # Dagger damage ranges for each of the 3 strikes
-potHeal = [53] # amount a potion heals
+potHeal = [54] # amount a potion heals
 
 # Other variables
 damageMultPercent = 0.05 # damage multiplier increases potential damage each turn
 playerStartingHealth = 700
 enemyStartingHealth = 700
 playAgain = True # Player can switch to false with input if they do not want to play again
-turnsMax = 20 # Max number of turns a round can take
+turnsMax = 30 # Max number of turns a round can take
 
 def chooseWep(): # Asks player for weapon choice
     wep = ''
@@ -62,10 +62,20 @@ def damCalc(damageMult): # Calculates damge done/ amount healed after player's t
 while playAgain:
     Health = playerStartingHealth
     EHealth = enemyStartingHealth
-    print('Time to fight! You must take turns choosing to use the dagger, the ax, or healing potion to bring your opponent HP to zero! Dagger will strike twice for lower but more consistant damage while axe is riskier but can hit much harder. Type POT to heal. Damage increases over turns')
+    print(" _,-,   ^    ......")
+    print(" T_ |   |    :.  .:")
+    print("||`-'   |    .'  '.")
+    print("||      |    |    |")
+    print("||     (=)   |    |")
+    print("~~      0    `----'")
+    print("Axe, Dagger, Potion ")
+    print()
+    print("(ASCII art from asciiart.eu axe and dagger anonymous and potion by AMC)")
+    print()
+    print('Time to fight! You must take turns choosing to use the dagger, the ax, or healing potion to bring your opponent HP to zero! Dagger will strike three times for lower but more consistant damage while axe is riskier but can hit much harder. Type POT to heal. Damage increases over turns')
     print('HP 700')
     print('bad guy HP 700')
-    print(f"You have {turnsMax} to win")
+    print(f"You have {turnsMax} turns to win")
 
     for i in range(turnsMax):
         damageMult = 1 + (i * damageMultPercent) # each turn increases damage multiplier

@@ -1,6 +1,6 @@
 # This program takes the stand alone game and tests a set of stats, changing one stat (axe low damage range, pot heal amount, ect) every round and 
 # send the win/loss percentage rate for every round to an sqlite database. Each test stores value of all stats and if the results are helpful, can be moved to folder called Balancesheets.
-# Look at a database set in Balancesheets folder to see results
+# Look at a database set in Balancesheets folder to see results or change stats, turn and round number, 
 # This data can be used to balance the stats for the stand alone game
 
 import random
@@ -13,8 +13,9 @@ dagDam = [4,19,5,20,20,42] # Low and high range of each of the 3 strikes for the
 potHeal = [54] # Amount of health the potion heals
 turnMax = 30 # Max number of turns per match
 numMatches = 10000 # How many matches will be run with a set of stats before changing test variable. The higher, the closer the data will be to the 'true' win/loss percentage of each set of stats, but the slower the program will run
-numRounds = 75 # This is how many times the test variable will be changed 
+numRounds = 150 # This is how many times the test variable will be changed and tested. In other words, how many different states the test variable will be tested in.
                 #(eg. if the high range of the Axe weapon starts at 100 and numRounds is 150, the win rate of each weapon will be tested at each stat from 100 to 250)
+damageMultPercent = 0.04 # Damage multiplier increases amount of dagmage done each turn by this percentage
 # Two weapons being tested           
 weapon1 = "AXE"
 weapon2 = "DAG"
@@ -22,9 +23,9 @@ weapon2 = "DAG"
 def TestVariableChange(): # This runs at the end of each round, altering the test variable so the next round can test the different set of stats
     axeDam[0] += 1
 
-def damCalc(dm,weapon, attack, defend, turn, flip): #Takes each health amount remaining and returns new health remaining after attack
+def damCalc(damageMult,weapon, attack, defend, turn, flip): #Takes each health amount remaining and returns new health remaining after attack
         if weapon == 'AXE':
-            damage = round(random.randint(axeDam[0], axeDam[1]) * dm)
+            damage = round(random.randint(axeDam[0], axeDam[1]) * damageMult)
             if damage >= 0:
                 #print(f"{tur n} did " + str(damage) + " damage!")#
                 defend -= damage
@@ -32,14 +33,14 @@ def damCalc(dm,weapon, attack, defend, turn, flip): #Takes each health amount re
                 #print(f"{turn} tripped using the heavy axe and did {damage * -1} to themself.")#
                 attack += damage
         if weapon == 'DAG':
-            ATT1 = round(random.randint(dagDam[0], dagDam[1]) * dm)
-            ATT2 = round(random.randint(dagDam[2], dagDam[3]) * dm)
-            ATT3 = round(random.randint(dagDam[4], dagDam[5]) * dm)
+            ATT1 = round(random.randint(dagDam[0], dagDam[1]) * damageMult)
+            ATT2 = round(random.randint(dagDam[2], dagDam[3]) * damageMult)
+            ATT3 = round(random.randint(dagDam[4], dagDam[5]) * damageMult)
             damage = ATT1 + ATT2 + ATT3 
             defend -= damage
             #print(f"{turn} did " + str(ATT1) + ", " + str(ATT2) + ", and " + str(ATT3) + " damage!")#
         if weapon == 'POT':
-            heal = round(potHeal[0] * dm)
+            heal = round(potHeal[0] * damageMult)
             attack += heal
             #print(f"{turn} healed " + str(heal))#
         if flip == "flip":    
@@ -50,9 +51,9 @@ def damCalc(dm,weapon, attack, defend, turn, flip): #Takes each health amount re
 def winnerIs(p1Wep,p2Wep): # Runs one match and returns winner
     health = [700, 700]
     for i in range(turnMax):
-        DM = 1 + (i * .04) #damage multiplier
-        health = damCalc(DM, p1Wep, health[0], health[1], "Player 1", "")
-        health = damCalc(DM, p2Wep, health[1], health[0], "Player 2", "flip")
+        damageMult = 1 + (i * damageMultPercent) # Damage multiplier calculated. increases each turn
+        health = damCalc(damageMult, p1Wep, health[0], health[1], "Player 1", "")
+        health = damCalc(damageMult, p2Wep, health[1], health[0], "Player 2", "flip")
         #print(f"Player 1's health is {health[0]} while Player 2's is {health[1]}")#
         if health[0] <= 0:
             return "p2"
